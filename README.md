@@ -1,5 +1,5 @@
 
-# Lighthouse
+# Forge404
 
 Forge404 is a powerful command line interface tool designed to facilitate the interaction with Non-Fungible Tokens (NFTs) on the EVM blockchain. It allows users to easily update and deploy NFT collections.
 
@@ -27,6 +27,13 @@ $ forge404
 
 
 ## Usage
+
+### `create ui`
+
+Init a new mint front project and overwrite a configuration file (`src/config.json`) based on your answers.
+```sh
+$ forge404 create-app
+```
 
 
 ### `init`
