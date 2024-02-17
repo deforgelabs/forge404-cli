@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import chalk from "chalk";
-import { spawn } from "child_process";
 import { program } from "commander";
 import fs from "fs";
 import inquirer from "inquirer";
@@ -83,7 +82,7 @@ const main = async () => {
   program
       .name("forge404")
       .description("Forge404 is a tool for creating NFT collections on the EVM blockchain.")
-      .version("0.0.1")
+      .version("0.0.11")
 
   program
       .command("set-wallet")
@@ -938,7 +937,7 @@ const main = async () => {
       fs.writeFileSync(path.resolve(dir, "./src/config.json"), JSON.stringify(config, null, 4))
       spinner.succeed("App created!, use `npm install` to continue")
       //execute npm install
-      const npmInstall = spawn('npm', ['install'], {cwd: dir})
+      // const npmInstall = spawn('npm', ['install'], {cwd: dir})
     } catch (e) {
       spinner.fail("Failed to create app")
       console.error(e)
