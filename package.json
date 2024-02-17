@@ -1,6 +1,6 @@
 {
   "name": "forge404",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A CLI tool to create NFT collections on EVM",
   "main": "dist/forge404.js",
   "repository": "https://github.com/forgecore/forge404-cli",
