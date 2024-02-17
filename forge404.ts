@@ -917,6 +917,10 @@ const main = async () => {
       }
     ])
     const chainId = +args.network.split("(")[1].split(")")[0]
+    if (!isSupportedChainId(chainId)) {
+      console.log(chalk.red("Unsupported chain id"))
+      return
+    }
     const config = {
       name: args.name,
       description: args.description,
@@ -926,6 +930,7 @@ const main = async () => {
       discord: args.discord,
       chain_id: chainId,
       collection_address: args.collection_address,
+      core_address: forgeCoreContracts[chainId],
       groups: [{
         name: 'public',
         allowlist: [],
