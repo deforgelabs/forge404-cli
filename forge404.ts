@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 import chalk from "chalk";
+import { spawn } from "child_process";
+import { program } from "commander";
 import fs from "fs";
-import {mnemonicToAccount, privateKeyToAccount} from "viem/accounts";
-import {chainMap, forgeCoreContracts, isSupportedChainId} from "./chain_config";
-import {Account, createWalletClient, http, isAddress, keccak256, publicActions, formatEther, Hex, hexToBytes} from 'viem'
-import {program} from "commander";
 import inquirer from "inquirer";
-import {createDefaultConfig, forgeBytecode, saveConfig} from "./utils";
-import {MerkleTree} from "merkletreejs";
+import { MerkleTree } from "merkletreejs";
 import ora from "ora";
-import {ABI_FORGECORE} from "./abis/ForgeCore";
-import {ABI_Forge404} from "./abis/Forge404";
-import {promisify} from "util";
-import {spawn} from "child_process";
+import path from "path";
+import { promisify } from "util";
+import { Account, Hex, createWalletClient, formatEther, hexToBytes, http, isAddress, keccak256, publicActions } from 'viem';
+import { mnemonicToAccount, privateKeyToAccount } from "viem/accounts";
+import { ABI_Forge404 } from "./abis/Forge404";
+import { ABI_FORGECORE } from "./abis/ForgeCore";
+import { chainMap, forgeCoreContracts, isSupportedChainId } from "./chain_config";
+import { createDefaultConfig, forgeBytecode, saveConfig } from "./utils";
 const download = promisify(require('download-git-repo'));
 
 
@@ -868,8 +869,8 @@ const main = async () => {
         console.log("Transaction hash: " + chalk.green(txReceipt.transactionHash))
       })
   program.command('create-app')
-      .argument('[path]', 'the path project to clone', './')
-      .action(async (path) => {
+      .argument('[dir]', 'the path project to clone', './')
+      .action(async (dir) => {
     const args = await inquirer.prompt([
       {
         type: 'input',
@@ -933,11 +934,11 @@ const main = async () => {
     }
     const spinner = ora("Creating app").start()
     try {
-      await download('forgecore/forge404-ui',path, {})
-      fs.writeFileSync(path.resolve(path, "./src/config.json"), JSON.stringify(config, null, 4))
-      spinner.succeed("App created!")
+      await download('forgecore/forge404-ui',dir, {})
+      fs.writeFileSync(path.resolve(dir, "./src/config.json"), JSON.stringify(config, null, 4))
+      spinner.succeed("App created!, use `npm install` to continue")
       //execute npm install
-      const npmInstall = spawn('npm', ['install'], {cwd: path})
+      const npmInstall = spawn('npm', ['install'], {cwd: dir})
     } catch (e) {
       spinner.fail("Failed to create app")
       console.error(e)
