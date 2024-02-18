@@ -931,6 +931,7 @@ const main = async () => {
       chain_id: chainId,
       collection_address: args.collection_address,
       core_address: forgeCoreContracts[chainId],
+      images: [],
       groups: [{
         name: 'public',
         allowlist: [],
@@ -967,23 +968,29 @@ const main = async () => {
         }
         let config = loadConfig()
         const wallet = await getWallet(config)
-        let spinner = ora("Creator withdraw").start()
 
         const chainId = config.chain_id
         if (!isSupportedChainId(chainId)) {
-          spinner.fail(`Chain ID ${chainId} is not supported.`)
+          console.log(chalk.red(`Chain ID ${chainId} is not supported.`))
           process.exit(1)
         } 
+        let spinner = ora("Creator withdraw").start()
+        try {
+          const hash = await wallet.writeContract({
+            abi: ABI_FORGECORE,
+            address: forgeCoreContracts[chainId],
+            functionName: 'creatorWithdraw',
+            args: [collection, to]
+          })
+          const txReceipt = await wallet.waitForTransactionReceipt({hash})
+          spinner.succeed("Creator withdraw!")
+          console.log("Transaction hash: " + chalk.green(txReceipt.transactionHash))
+        } catch (e) {
+          spinner.fail("Failed to creator withdraw")
+          console.error(e)
+          process.exit(1)
+        }
 
-        const hash = await wallet.writeContract({
-          abi: ABI_FORGECORE,
-          address: forgeCoreContracts[chainId],
-          functionName: 'creatorWithdraw',
-          args: [collection, to]
-        })
-        const txReceipt = await wallet.waitForTransactionReceipt({hash})
-        spinner.succeed("Creator withdraw!")
-        console.log("Transaction hash: " + chalk.green(txReceipt.transactionHash))
       })
 
   program.parse()
