@@ -950,6 +950,42 @@ const main = async () => {
     }
 
   })
+  /**
+   *     function creatorWithdraw(address collection, address payable to) public {
+   */
+  program.command('creator-withdraw')
+      .argument('<collection>', 'collection address')
+      .argument('<to>', 'withdraw to address')
+      .action(async (collection, to) => {
+        if (!isAddress(collection)) {
+          console.log(chalk.red("Invalid collection address"))
+          return
+        }
+        if (!isAddress(to)) {
+          console.log(chalk.red("Invalid withdraw to address"))
+          return
+        }
+        let config = loadConfig()
+        const wallet = await getWallet(config)
+        let spinner = ora("Creator withdraw").start()
+
+        const chainId = config.chain_id
+        if (!isSupportedChainId(chainId)) {
+          spinner.fail(`Chain ID ${chainId} is not supported.`)
+          process.exit(1)
+        } 
+
+        const hash = await wallet.writeContract({
+          abi: ABI_FORGECORE,
+          address: forgeCoreContracts[chainId],
+          functionName: 'creatorWithdraw',
+          args: [collection, to]
+        })
+        const txReceipt = await wallet.waitForTransactionReceipt({hash})
+        spinner.succeed("Creator withdraw!")
+        console.log("Transaction hash: " + chalk.green(txReceipt.transactionHash))
+      })
+
   program.parse()
 
 }
