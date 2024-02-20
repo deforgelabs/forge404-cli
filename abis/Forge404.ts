@@ -40,9 +40,19 @@ export const ABI_Forge404 = [
         "internalType": "bool",
         "name": "pauseTransfer",
         "type": "bool"
+      },
+      {
+        "internalType": "address",
+        "name": "serviceFeeReceiver_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "serviceFee_",
+        "type": "uint256"
       }
     ],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "constructor"
   },
   {

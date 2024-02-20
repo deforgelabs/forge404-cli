@@ -7,14 +7,24 @@ import { MerkleTree } from "merkletreejs";
 import ora from "ora";
 import path from "path";
 import { promisify } from "util";
-import { Account, Hex, createWalletClient, formatEther, hexToBytes, http, isAddress, keccak256, publicActions } from 'viem';
+import {
+    Account,
+    Hex,
+    createWalletClient,
+    formatEther,
+    hexToBytes,
+    http,
+    isAddress,
+    keccak256,
+    publicActions,
+    parseEther
+} from 'viem';
 import { mnemonicToAccount, privateKeyToAccount } from "viem/accounts";
 import { ABI_Forge404 } from "./abis/Forge404";
 import { ABI_FORGECORE } from "./abis/ForgeCore";
-import { chainMap, forgeCoreContracts, isSupportedChainId } from "./chain_config";
+import {chainMap, deployFeeReceiver, forgeCoreContracts, isSupportedChainId} from "./chain_config";
 import { createDefaultConfig, forgeBytecode, saveConfig } from "./utils";
 const download = promisify(require('download-git-repo'));
-
 
 
 
@@ -443,10 +453,13 @@ const main = async () => {
 
         let spinner = ora("Deploying Collection Contract").start()
 
+          const feeReceiver = deployFeeReceiver[chainId]
+          const fee = parseEther('0.001')
         const hash = await wallet.deployContract({
           abi: ABI_Forge404,
           bytecode: forgeBytecode,
-          args: [args.name, args.symbol, args.decimals, args.supply, args.ratio, args.initial_owner, args.initial_mint_recipient, args.pause_transfer]
+          args: [args.name, args.symbol, args.decimals, args.supply, args.ratio, args.initial_owner, args.initial_mint_recipient, args.pause_transfer, feeReceiver, fee],
+            value:fee
         })
 
         const receipt = await wallet.waitForTransactionReceipt({hash})
@@ -973,7 +986,7 @@ const main = async () => {
         if (!isSupportedChainId(chainId)) {
           console.log(chalk.red(`Chain ID ${chainId} is not supported.`))
           process.exit(1)
-        } 
+        }
         let spinner = ora("Creator withdraw").start()
         try {
           const hash = await wallet.writeContract({
