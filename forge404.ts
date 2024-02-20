@@ -56,7 +56,7 @@ const loadConfig = () => {
     return config
 
   } else {
-    console.log(chalk.red("\nConfig file not found"))
+    console.log(chalk.red("\nConfig file not found,you can use `forge404 init` to generate a config.json in current working directory"))
     process.exit(1)
   }
 }
