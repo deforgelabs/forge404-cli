@@ -92,7 +92,7 @@ const main = async () => {
   program
       .name("forge404")
       .description("Forge404 is a tool for creating NFT collections on the EVM blockchain.")
-      .version("0.0.11")
+      .version("0.0.16")
 
   program
       .command("set-wallet")
